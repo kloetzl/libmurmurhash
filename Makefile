@@ -6,6 +6,8 @@ SHELL=bash
 
 VERSION=1
 SOVERSION=1
+PROJECT_VERSION=libmurmurhash-$(VERSION)
+TARBALL=$(PROJECT_VERSION).tar.gz
 
 DESTDIR?=/usr
 LIBDIR?=$(DESTDIR)/lib
@@ -32,6 +34,40 @@ libmurmurhash.a: $(OBJECTS)
 $(SONAME): libmurmurhash.a
 	$(CC) -Wl,-soname,$(SONAME) -shared -o $@ $^
 
+## installation
+.PHONY: install install-dev install-lib uninstall dist distcheck
+
+install: install-dev install-lib
+
+install-dev:
+	install -D -m0644 -t "$(INCLUDEDIR)" murmurhash.h
+
+install-lib:
+	install -D -t "$(LIBDIR)" $(SONAME)
+	ln -f -r -s "$(LIBDIR)/$(SONAME)" "$(LIBDIR)/libmurmurhash.so"
+
+uninstall:
+	$(RM) "$(INCLUDEDIR)/murmurhash.h"
+	$(RM) "$(LIBDIR)/libmurmurhash.so"
+	$(RM) "$(LIBDIR)/$(SONAME)"
+
+$(TARBALL):
+	mkdir -p "$(PROJECT_VERSION)"/test
+	cp Makefile Readme.md NOLICENSE "$(PROJECT_VERSION)"
+	cp *.h *.c "$(PROJECT_VERSION)"
+	cp test/*.c test/*.h "$(PROJECT_VERSION)/test"
+	cp test/almostempty test/almostempty.hash "$(PROJECT_VERSION)/test"
+	tar -ca -f $@ "$(PROJECT_VERSION)"
+	$(RM) -r "$(PROJECT_VERSION)"
+
+dist: $(TARBALL)
+
+distcheck: dist
+	tar -xzvf "$(TARBALL)"
+	$(MAKE) -C "$(PROJECT_VERSION)"
+	$(MAKE) -C "$(PROJECT_VERSION)" check
+	$(RM) -r "$(PROJECT_VERSION)"
+
 ## checks
 mmh.o: test/mmh.c
 	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
@@ -48,9 +84,12 @@ mmh_r: mmh.o MurmurHash3.o
 check: mmh mmh_r
 	diff test/almostempty.hash <(./mmh test/almostempty)
 
+## misc
+
 format:
 	clang-format -i *.c *.h test/*.c test/*.h
 
 clean:
 	$(RM) *.o *.a *.so *.so.* mmh mmh_r
-	$(RM) test/*.o
+	$(RM) test/*.o *.tar.gz
+	$(RM) -r "$(PROJECT_VERSION)"
