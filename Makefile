@@ -32,7 +32,7 @@ libmurmurhash.a: $(OBJECTS)
 	$(AR) -qs $@ $^
 
 $(SONAME): libmurmurhash.a
-	$(CC) -Wl,-soname,$(SONAME) -shared -o $@ $^
+	$(CC) -Wl,-soname,$(SONAME) -shared -o $@ -Wl,--whole-archive -L. -lmurmurhash -Wl,--no-whole-archive
 
 ## installation
 .PHONY: install install-dev install-lib uninstall dist distcheck
@@ -78,11 +78,18 @@ MurmurHash3.o: test/MurmurHash3.c test/MurmurHash3.h
 mmh: mmh.o libmurmurhash.a
 	$(CC) $(CFLAGS) -o $@ $^ -Wl,--whole-archive -L. -lmurmurhash -Wl,--no-whole-archive
 
+mmh_d: mmh.o
+	$(CC) $(CFLAGS) -o $@ $^ -lmurmurhash
+
 mmh_r: mmh.o MurmurHash3.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 check: mmh mmh_r
 	diff test/almostempty.hash <(./mmh test/almostempty)
+
+check-dynamic: mmh_r mmh_d
+	diff test/almostempty.hash <(./mmh_d test/almostempty)
+
 
 ## misc
 
