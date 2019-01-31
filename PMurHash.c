@@ -45,6 +45,10 @@ To handle endianess I simply use a macro that reads a uint32_t and define
 that macro to be a direct read on little endian machines, a read and swap
 on big endian machines, or a byte-by-byte read if the endianess is unknown.
 
+
+Addendum 2019-01-31: Byte order detection was somewhat out of order. I added
+macros as suggested by recent GCC documentation. (Fabian Klötzl)
+
 -----------------------------------------------------------------------------*/
 
 #include "PMurHash.h"
@@ -72,6 +76,18 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
  * UNALIGNED_SAFE   Defined if READ_UINT32 works on non-word boundaries
  * ROTL32(x,r)      Rotate x left by r bits
  */
+
+#if defined(__ORDER_LITTLE_ENDIAN__)
+#define __LITTLE_ENDIAN __ORDER_LITTLE_ENDIAN__
+#endif
+
+#if defined(__ORDER_BIG_ENDIAN__)
+#define __BIG_ENDIAN __ORDER_BIG_ENDIAN__
+#endif
+
+#if defined(__BYTE_ORDER__)
+#define __BYTE_ORDER __BYTE_ORDER__
+#endif
 
 /* Convention is to define __BYTE_ORDER == to one of these values */
 #if !defined(__BIG_ENDIAN)
