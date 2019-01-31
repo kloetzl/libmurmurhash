@@ -34,14 +34,14 @@ weak_alias(lmmh_x86_32, MurmurHash3_x86_32);
 #define ROTL32(x, r) (((uint32_t)x << r) | ((uint32_t)x >> (32 - r)))
 #define ROTL64(x, r) (((uint64_t)x << r) | ((uint64_t)x >> (64 - r)))
 
-uint32_t getblock32(const void *addr, int offset)
+static uint32_t getblock32(const void *addr, int offset)
 {
 	unsigned char data[sizeof(uint32_t)];
 	memcpy(&data, addr + offset * sizeof(uint32_t), sizeof(uint32_t));
 	return READ_UINT32(data);
 }
 
-uint32_t fmix32(uint32_t h)
+static uint32_t fmix32(uint32_t h)
 {
 	h ^= h >> 16;
 	h *= 0x85ebca6b;
@@ -199,7 +199,7 @@ void lmm_x86_128(const void *key, int len, uint32_t seed, void *out)
 }
 weak_alias(lmm_x86_128, MurmurHash3_x86_128);
 
-uint64_t getblock64(const unsigned char *addr, int offset)
+static uint64_t getblock64(const unsigned char *addr, int offset)
 {
 	unsigned char data[sizeof(uint64_t)];
 	memcpy(&data, addr + offset * sizeof(uint64_t), sizeof(uint64_t));
@@ -208,7 +208,7 @@ uint64_t getblock64(const unsigned char *addr, int offset)
 
 #define BIG_CONSTANT(x) (x##LLU)
 
-uint64_t fmix64(uint64_t k)
+static uint64_t fmix64(uint64_t k)
 {
 	k ^= k >> 33;
 	k *= BIG_CONSTANT(0xff51afd7ed558ccd);
