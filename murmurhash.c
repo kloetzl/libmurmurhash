@@ -10,12 +10,15 @@
 #define weak_alias(old, new)                                                   \
 	extern __typeof(old) new __attribute__((weak, alias(#old)))
 
+extern void lmmh_x86_32(const void *key, int len, uint32_t seed, void *out);
+extern void lmmh_x86_128(const void *key, int len, uint32_t seed, void *out);
+extern void lmmh_x64_128(const void *key, const int len, const uint32_t seed, void *out);
+
 void lmmh_x86_32(const void *key, int len, MH_UINT32 seed, void *out)
 {
 	MH_UINT32 hash = PMurHash32(seed, key, len);
 	memcpy(out, &hash, sizeof(hash));
 }
-
 weak_alias(lmmh_x86_32, MurmurHash3_x86_32);
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -52,7 +55,7 @@ static uint32_t fmix32(uint32_t h)
 	return h;
 }
 
-void lmm_x86_128(const void *key, int len, uint32_t seed, void *out)
+void lmmh_x86_128(const void *key, int len, uint32_t seed, void *out)
 {
 	const uint8_t *data = (const uint8_t *)key;
 	const int nblocks = len / 16;
@@ -197,7 +200,7 @@ void lmm_x86_128(const void *key, int len, uint32_t seed, void *out)
 	((uint32_t *)out)[2] = h3;
 	((uint32_t *)out)[3] = h4;
 }
-weak_alias(lmm_x86_128, MurmurHash3_x86_128);
+weak_alias(lmmh_x86_128, MurmurHash3_x86_128);
 
 static uint64_t getblock64(const unsigned char *addr, int offset)
 {
@@ -219,7 +222,7 @@ static uint64_t fmix64(uint64_t k)
 	return k;
 }
 
-void lmm_x64_128(const void *key, const int len, const uint32_t seed, void *out)
+void lmmh_x64_128(const void *key, const int len, const uint32_t seed, void *out)
 {
 	const uint8_t *data = (const uint8_t *)key;
 	const int nblocks = len / 16;
@@ -311,4 +314,4 @@ void lmm_x64_128(const void *key, const int len, const uint32_t seed, void *out)
 	((uint64_t *)out)[0] = h1;
 	((uint64_t *)out)[1] = h2;
 }
-weak_alias(lmm_x64_128, MurmurHash3_x64_128);
+weak_alias(lmmh_x64_128, MurmurHash3_x64_128);
