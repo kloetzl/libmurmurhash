@@ -18,87 +18,21 @@ void lmmh_x86_32(const void *key, int len, MH_UINT32 seed, void *out)
 
 weak_alias(lmmh_x86_32, MurmurHash3_x86_32);
 
-
-/*-----------------------------------------------------------------------------
- * Endianess, misalignment capabilities and util macros
- *
- * The following 3 macros are defined in this section. The other macros defined
- * are only needed to help derive these 3.
- *
- * READ_UINT32(x)   Read a little endian unsigned 32-bit int
- * UNALIGNED_SAFE   Defined if READ_UINT32 works on non-word boundaries
- * ROTL32(x,r)      Rotate x left by r bits
- */
-
-/* Convention is to define __BYTE_ORDER == to one of these values */
-#if !defined(__BIG_ENDIAN)
-#define __BIG_ENDIAN 4321
-#endif
-#if !defined(__LITTLE_ENDIAN)
-#define __LITTLE_ENDIAN 1234
-#endif
-
-/* I386 */
-#if defined(_M_IX86) || defined(__i386__) || defined(__i386) || defined(i386)
-#define __BYTE_ORDER __LITTLE_ENDIAN
-#define UNALIGNED_SAFE
-#endif
-
-/* gcc 'may' define __LITTLE_ENDIAN__ or __BIG_ENDIAN__ to 1 (Note the trailing
- * __), or even _LITTLE_ENDIAN or _BIG_ENDIAN (Note the single _ prefix) */
-#if !defined(__BYTE_ORDER)
-#if defined(__LITTLE_ENDIAN__) && __LITTLE_ENDIAN__ == 1 ||                    \
-	defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN == 1
-#define __BYTE_ORDER __LITTLE_ENDIAN
-#elif defined(__BIG_ENDIAN__) && __BIG_ENDIAN__ == 1 ||                        \
-	defined(_BIG_ENDIAN) && _BIG_ENDIAN == 1
-#define __BYTE_ORDER __BIG_ENDIAN
-#endif
-#endif
-
-/* gcc (usually) defines xEL/EB macros for ARM and MIPS endianess */
-#if !defined(__BYTE_ORDER)
-#if defined(__ARMEL__) || defined(__MIPSEL__)
-#define __BYTE_ORDER __LITTLE_ENDIAN
-#endif
-#if defined(__ARMEB__) || defined(__MIPSEB__)
-#define __BYTE_ORDER __BIG_ENDIAN
-#endif
-#endif
-
-/* Now find best way we can to READ_UINT32 */
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-/* CPU endian matches murmurhash algorithm, so read 32-bit word directly */
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define READ_UINT32(ptr) (*((uint32_t *)(ptr)))
-#elif __BYTE_ORDER == __BIG_ENDIAN
-/* TODO: Add additional cases below where a compiler provided bswap32 is
- * available */
-#if defined(__GNUC__) &&                                                       \
-	(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3))
+#define READ_UINT64(ptr) (*((uint64_t *)(ptr)))
+
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #define READ_UINT32(ptr) (__builtin_bswap32(*((uint32_t *)(ptr))))
-#else
-/* Without a known fast bswap32 we're just as well off doing this */
-#define READ_UINT32(ptr) (ptr[0] | ptr[1] << 8 | ptr[2] << 16 | ptr[3] << 24)
-#define UNALIGNED_SAFE
-#endif
-#else
-/* Unknown endianess so last resort is to read individual bytes */
-#define READ_UINT32(ptr) (ptr[0] | ptr[1] << 8 | ptr[2] << 16 | ptr[3] << 24)
+#define READ_UINT64(ptr) (__builtin_bswap64(*((uint64_t *)(ptr))))
 
-/* Since we're not doing word-reads we can skip the messing about with
- * realignment */
-#define UNALIGNED_SAFE
+#else
+#error "weird byte order"
 #endif
 
-/* Find best way to ROTL32 */
-#if defined(_MSC_VER)
-#include <stdlib.h> /* Microsoft put _rotl declaration in here */
-#define ROTL32(x, r) _rotl(x, r)
-#else
-/* gcc recognises this code and generates a rotate instruction for CPUs with one
- */
+/* Please don't send me emails about how this is undefined behaviour. */
 #define ROTL32(x, r) (((uint32_t)x << r) | ((uint32_t)x >> (32 - r)))
-#endif
+#define ROTL64(x, r) (((uint64_t)x << r) | ((uint64_t)x >> (64 - r)))
 
 uint32_t getblock32(const void *addr, size_t offset)
 {
@@ -136,13 +70,11 @@ void lmm_x86_128(const void *key, int len, uint32_t seed, void *out)
 	//----------
 	// body
 
-	const uint32_t *blocks = (const uint32_t *)(data + nblocks * 16);
-
 	for (int i = -nblocks; i; i++) {
-		uint32_t k1 = getblock32(blocks, i * 4 + 0);
-		uint32_t k2 = getblock32(blocks, i * 4 + 1);
-		uint32_t k3 = getblock32(blocks, i * 4 + 2);
-		uint32_t k4 = getblock32(blocks, i * 4 + 3);
+		uint32_t k1 = getblock32(data, i * 4 + 0);
+		uint32_t k2 = getblock32(data, i * 4 + 1);
+		uint32_t k3 = getblock32(data, i * 4 + 2);
+		uint32_t k4 = getblock32(data, i * 4 + 3);
 
 		k1 *= c1;
 		k1 = ROTL32(k1, 15);
@@ -266,23 +198,6 @@ void lmm_x86_128(const void *key, int len, uint32_t seed, void *out)
 }
 weak_alias(lmm_x86_128, MurmurHash3_x86_128);
 
-#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN
-#define READ_UINT64(ptr) (*((uint64_t *)(ptr)))
-#elif __BYTE_ORDER == __BIG_ENDIAN
-#if defined(__GNUC__) &&                                                       \
-	(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3))
-#define READ_UINT64(ptr) (__builtin_bswap64(*((uint64_t *)(ptr))))
-#else
-#define READ_UINT64(ptr) (ptr[0] | ptr[1] << 8 | ptr[2] << 16 | ptr[3] << 24 | ptr[4] << 32 | ptr[5] << 40 | ptr[6] << 48 | ptr[7] << 56)
-#define UNALIGNED_SAFE
-#endif
-#else
-#define READ_UINT64(ptr) (ptr[0] | ptr[1] << 8 | ptr[2] << 16 | ptr[3] << 24 | ptr[4] << 32 | ptr[5] << 40 | ptr[6] << 48 | ptr[7] << 56)
-#define UNALIGNED_SAFE
-#endif
-
-#define ROTL64(x, r) (((uint64_t)x << r) | ((uint64_t)x >> (64 - r)))
-
 uint64_t getblock64(const unsigned char *addr, int offset)
 {
 	unsigned char data[sizeof(uint64_t)];
@@ -303,8 +218,7 @@ uint64_t fmix64(uint64_t k)
 	return k;
 }
 
-void lmm_x64_128(const void *key, const int len, const uint32_t seed,
-						 void *out)
+void lmm_x64_128(const void *key, const int len, const uint32_t seed, void *out)
 {
 	const uint8_t *data = (const uint8_t *)key;
 	const int nblocks = len / 16;
@@ -318,11 +232,9 @@ void lmm_x64_128(const void *key, const int len, const uint32_t seed,
 	//----------
 	// body
 
-	const uint64_t *blocks = (const uint64_t *)(data);
-
 	for (int i = 0; i < nblocks; i++) {
-		uint64_t k1 = getblock64(blocks, i * 2 + 0);
-		uint64_t k2 = getblock64(blocks, i * 2 + 1);
+		uint64_t k1 = getblock64(data, i * 2 + 0);
+		uint64_t k2 = getblock64(data, i * 2 + 1);
 
 		k1 *= c1;
 		k1 = ROTL64(k1, 31);
