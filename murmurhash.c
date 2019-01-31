@@ -34,7 +34,7 @@ weak_alias(lmmh_x86_32, MurmurHash3_x86_32);
 #define ROTL32(x, r) (((uint32_t)x << r) | ((uint32_t)x >> (32 - r)))
 #define ROTL64(x, r) (((uint64_t)x << r) | ((uint64_t)x >> (64 - r)))
 
-uint32_t getblock32(const void *addr, size_t offset)
+uint32_t getblock32(const void *addr, int offset)
 {
 	unsigned char data[sizeof(uint32_t)];
 	memcpy(&data, addr + offset * sizeof(uint32_t), sizeof(uint32_t));
@@ -70,11 +70,12 @@ void lmm_x86_128(const void *key, int len, uint32_t seed, void *out)
 	//----------
 	// body
 
+	const uint8_t *ptr = data + nblocks * 16;
 	for (int i = -nblocks; i; i++) {
-		uint32_t k1 = getblock32(data, i * 4 + 0);
-		uint32_t k2 = getblock32(data, i * 4 + 1);
-		uint32_t k3 = getblock32(data, i * 4 + 2);
-		uint32_t k4 = getblock32(data, i * 4 + 3);
+		uint32_t k1 = getblock32(ptr, i * 4 + 0);
+		uint32_t k2 = getblock32(ptr, i * 4 + 1);
+		uint32_t k3 = getblock32(ptr, i * 4 + 2);
+		uint32_t k4 = getblock32(ptr, i * 4 + 3);
 
 		k1 *= c1;
 		k1 = ROTL32(k1, 15);
