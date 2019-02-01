@@ -77,7 +77,7 @@ MurmurHash3.o: test/MurmurHash3.c test/MurmurHash3.h
 	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ test/MurmurHash3.c
 
 mmh: mmh.o libmurmurhash.a
-	$(CC) $(CFLAGS) -o $@ $^ -Wl,--whole-archive -L. -lmurmurhash -Wl,--no-whole-archive
+	$(CC) $(CFLAGS) -o $@ $^ -L. -lmurmurhash
 
 mmh_d: test/mmh.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ -lmurmurhash
