@@ -13,6 +13,7 @@ DESTDIR?=/usr
 LIBDIR?=$(DESTDIR)/lib
 INCLUDEDIR?=$(DESTDIR)/include
 MANDIR?=$(DESTDIR)/share/man
+INSTALL?=install
 
 SONAME=libmurmurhash.so.$(SOVERSION)
 OBJECTS=PMurHash.o murmurhash.o
@@ -40,10 +41,10 @@ $(SONAME): libmurmurhash.a
 install: install-dev install-lib
 
 install-dev:
-	install -D -m0644 -t "$(INCLUDEDIR)" murmurhash.h
+	$(INSTALL) -D -m0644 -t "$(INCLUDEDIR)" murmurhash.h
 
 install-lib:
-	install -D -t "$(LIBDIR)" $(SONAME)
+	$(INSTALL) -D -t "$(LIBDIR)" $(SONAME)
 	ln -f -r -s "$(LIBDIR)/$(SONAME)" "$(LIBDIR)/libmurmurhash.so"
 
 uninstall:
