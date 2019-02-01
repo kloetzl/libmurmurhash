@@ -9,12 +9,21 @@ extern "C" {
 #endif
 #include <stdint.h>
 
-extern __attribute__((weak)) void MurmurHash3_x86_32(const void *key, int len,
-													 uint32_t seed, void *out);
-extern __attribute__((weak)) void MurmurHash3_x86_128(const void *key, int len,
-													  uint32_t seed, void *out);
-extern __attribute__((weak)) void MurmurHash3_x64_128(const void *key, int len,
-													  uint32_t seed, void *out);
+extern void lmmh_x86_32(const void *key, int len, uint32_t seed, void *out);
+extern void lmmh_x86_128(const void *key, int len, uint32_t seed, void *out);
+extern void lmmh_x64_128(const void *key, const int len, const uint32_t seed,
+						 void *out);
+
+// old interface:
+extern void MurmurHash3_x86_32(const void *key, int len, uint32_t seed,
+							   void *out)
+	__attribute__((weak));
+extern void MurmurHash3_x86_128(const void *key, int len, uint32_t seed,
+								void *out)
+	__attribute__((weak));
+extern void MurmurHash3_x64_128(const void *key, int len, uint32_t seed,
+								void *out)
+	__attribute__((weak));
 
 #ifdef __cplusplus__
 }

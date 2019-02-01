@@ -10,10 +10,6 @@
 #define weak_alias(old, new)                                                   \
 	extern __typeof(old) new __attribute__((weak, alias(#old)))
 
-extern void lmmh_x86_32(const void *key, int len, uint32_t seed, void *out);
-extern void lmmh_x86_128(const void *key, int len, uint32_t seed, void *out);
-extern void lmmh_x64_128(const void *key, const int len, const uint32_t seed, void *out);
-
 void lmmh_x86_32(const void *key, int len, MH_UINT32 seed, void *out)
 {
 	MH_UINT32 hash = PMurHash32(seed, key, len);

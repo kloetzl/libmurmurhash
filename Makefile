@@ -79,8 +79,8 @@ MurmurHash3.o: test/MurmurHash3.c test/MurmurHash3.h
 mmh: mmh.o libmurmurhash.a
 	$(CC) $(CFLAGS) -o $@ $^ -Wl,--whole-archive -L. -lmurmurhash -Wl,--no-whole-archive
 
-mmh_d: mmh.o
-	$(CC) $(CFLAGS) -o $@ $^ -lmurmurhash
+mmh_d: test/mmh.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ -lmurmurhash
 
 mmh_r: mmh.o MurmurHash3.o
 	$(CC) $(CFLAGS) -o $@ $^
@@ -88,7 +88,7 @@ mmh_r: mmh.o MurmurHash3.o
 check: mmh mmh_r
 	diff test/almostempty.hash <(./mmh test/almostempty)
 
-check-dynamic: mmh_r mmh_d
+check-dynamic: mmh_d
 	diff test/almostempty.hash <(./mmh_d test/almostempty)
 
 
@@ -98,6 +98,6 @@ format:
 	clang-format -i *.c *.h test/*.c test/*.h
 
 clean:
-	$(RM) *.o *.a *.so *.so.* mmh mmh_r
+	$(RM) *.o *.a *.so *.so.* mmh mmh_r mmh_d
 	$(RM) test/*.o *.tar.gz
 	$(RM) -r "$(PROJECT_VERSION)"
