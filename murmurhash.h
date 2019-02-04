@@ -4,7 +4,7 @@
 
 #pragma once
 
-#ifdef __cplusplus__
+#ifdef __cplusplus
 extern "C" {
 #endif
 #include <stdint.h>
@@ -17,6 +17,6 @@ extern void MurmurHash3_x86_128(const void *data, int len, uint32_t seed,
 extern void MurmurHash3_x64_128(const void *data, int len, uint32_t seed,
 								void *out);
 
-#ifdef __cplusplus__
+#ifdef __cplusplus
 }
 #endif
