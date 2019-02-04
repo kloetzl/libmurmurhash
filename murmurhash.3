@@ -1,0 +1,29 @@
+.TH LIBMURMURHASH "3" "2019-02-04" "1" "libmurmurhash manual"
+.SH NAME
+libmurmurhash \- non-cryptographic hash functions
+.SH SYNOPSIS
+.nf
+.B #include <murmurhash.h>
+.PP
+.BI "void MurmurHash3_x86_32(const void *" data ", int " len ", uint32_t " seed ", void *" out ");
+.BI "void MurmurHash3_x86_128(const void *" data ", int " len ", uint32_t " seed ", void *" out ");
+.BI "void MurmurHash3_x64_128(const void *" data ", int " len ", uint32_t " seed ", void *" out ");
+.fi
+.SH DESCRIPTION
+.TP
+LibMurmurHash provides the three variants of MurmurHash3 from the original source. The first parameter \fIdata\fR specifies the beginning of the data to be hashed, in memory. The second parameter \fIlen\fR gives the number of bytes to be hashed (must be positive). The third parameter \fIseed\fR can be used to compute an alternate hash on the same data. The output parameter \fIout\fR specifies the location where the resulting hash shall be written to. It should be at least 4-byte or 8-byte aligned.
+.SH EXAMPLE
+.TP
+Compute the hash of \fIlength\fR bytes starting from \fIdata\fR and print the 32-bit sized hash value.
+.PP
+.in +4n
+.EX
+uint32_t hash;
+MurmurHash3_x86_32(data, length, 0, &hash);
+printf("%" PRIx32 "", hash);
+.SH AUTHORS
+MurmurHash was created by Austin Appleby. PMurHash was written by Shane Day. Fabian Klötzl created libmurmurhash. All code is dedicated to the public domain.
+.SH BUGS
+.SS Reporting Bugs
+Please file a bug on GitHub <github.com/kloetzl/libmurmurhash> or send me a mail <fabian-libmurmurhash@kloetzl.info>.
+.SS
