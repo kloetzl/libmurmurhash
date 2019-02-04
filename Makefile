@@ -42,8 +42,12 @@ install: install-dev install-lib
 
 install-dev:
 	$(INSTALL) -D -m0644 -t "$(INCLUDEDIR)" murmurhash.h
+	$(INSTALL) -D -m0644 -t "$(MANDIR)/man3" murmurhash.3
+	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/MurmurHash3_x86_32.3"
+	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/MurmurHash3_x86_128.3"
+	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/MurmurHash3_x64_128.3"
 
-install-lib:
+install-lib: $(SONAME)
 	$(INSTALL) -D -t "$(LIBDIR)" $(SONAME)
 	ln -f -r -s "$(LIBDIR)/$(SONAME)" "$(LIBDIR)/libmurmurhash.so"
 
@@ -51,6 +55,8 @@ uninstall:
 	$(RM) "$(INCLUDEDIR)/murmurhash.h"
 	$(RM) "$(LIBDIR)/libmurmurhash.so"
 	$(RM) "$(LIBDIR)/$(SONAME)"
+	$(RM) "$(MANDIR)/man3/murmurhash.3"
+	$(RM) "$(MANDIR)/man3/MurmurHash3_*"
 
 $(TARBALL):
 	mkdir -p "$(PROJECT_VERSION)"/test
