@@ -56,34 +56,22 @@ int main(int argc, char *argv[])
 		err(errno, "%s: failed to map file", file_name);
 	}
 
-	if (MurmurHash3_x86_32) {
-		uint32_t hash;
-		MurmurHash3_x86_32(data, length, 0, &hash);
-		printf("%" PRIx32 "", hash);
-	} else {
-		printf("(MurmurHash3_x86_32 not linked)");
+	uint32_t hash;
+	MurmurHash3_x86_32(data, length, 0, &hash);
+	printf("%" PRIx32 "", hash);
+
+	uint32_t hash2[4];
+	MurmurHash3_x86_128(data, length, 0, &hash2);
+	printf("  ");
+	for (int i = 0; i < 4; i++) {
+		printf("%" PRIx32 "", hash2[i]);
 	}
 
-	if (MurmurHash3_x86_128) {
-		uint32_t hash[4];
-		MurmurHash3_x86_128(data, length, 0, &hash);
-		printf("  ");
-		for (int i = 0; i < 4; i++) {
-			printf("%" PRIx32 "", hash[i]);
-		}
-	} else {
-		printf("  (MurmurHash3_x86_128 not linked)");
-	}
-
-	if (MurmurHash3_x64_128) {
-		uint32_t hash[4];
-		MurmurHash3_x64_128(data, length, 0, &hash);
-		printf("  ");
-		for (int i = 0; i < 4; i++) {
-			printf("%" PRIx32 "", hash[i]);
-		}
-	} else {
-		printf("  (MurmurHash3_x64_128 not linked)");
+	uint64_t hash3[2];
+	MurmurHash3_x64_128(data, length, 0, &hash3);
+	printf("  ");
+	for (int i = 0; i < 2; i++) {
+		printf("%" PRIx64 "", hash3[i]);
 	}
 
 	printf("\n");
