@@ -79,23 +79,36 @@ distcheck: dist
 mmh.o: test/mmh.c
 	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
 
+mmh_old.o: test/mmh_old.c
+	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
+
 MurmurHash3.o: test/MurmurHash3.c test/MurmurHash3.h
 	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ test/MurmurHash3.c
 
+# new interface, static linking
 mmh: mmh.o libmurmurhash.a
 	$(CC) $(CFLAGS) -o $@ $^ -L. -lmurmurhash
 
-mmh_d: test/mmh.c
+# new interface, dynamic linking
+mmh_dyn: test/mmh.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ -lmurmurhash
 
-mmh_r: mmh.o MurmurHash3.o
+# old interface, static linking
+mmh_old: mmh_old.o libmurmurhash.a
+	$(CC) $(CFLAGS) -o $@ $^ -L. -lmurmurhash
+
+# old interface, reference implementation
+mmh_ref: mmh_old.o MurmurHash3.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-check: mmh mmh_r
+check: mmh mmh_old mmh_ref
 	diff test/almostempty.hash <(./mmh test/almostempty)
+	diff test/almostempty.hash <(./mmh_old test/almostempty)
+	diff test/almostempty.hash <(./mmh_ref test/almostempty)
 
-check-dynamic: mmh_d
-	diff test/almostempty.hash <(./mmh_d test/almostempty)
+# should be checked after installation!
+check-dynamic: mmh_dyn
+	diff test/almostempty.hash <(./mmh_dyn test/almostempty)
 
 
 ## misc
@@ -104,6 +117,6 @@ format:
 	clang-format -i *.c *.h test/*.c test/*.h
 
 clean:
-	$(RM) *.o *.a *.so *.so.* mmh mmh_r mmh_d
+	$(RM) *.o *.a *.so *.so.* mmh mmh_*
 	$(RM) test/*.o *.tar.gz
 	$(RM) -r "$(PROJECT_VERSION)"

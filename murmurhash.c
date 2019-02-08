@@ -4,14 +4,24 @@
 
 #include "murmurhash.h"
 #include "PMurHash.h"
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-void lmmh_x86_32(const void *addr, int len, MH_UINT32 seed, void *out)
+void lmmh_x86_32(const void *addr, unsigned int len, MH_UINT32 seed,
+				 uint32_t out[1])
 {
-	MH_UINT32 hash = PMurHash32(seed, addr, len);
-	memcpy(out, &hash, sizeof(hash));
+	if (len < (unsigned int)INT_MAX) {
+		MH_UINT32 hash = PMurHash32(seed, addr, len);
+		memcpy(out, &hash, sizeof(hash));
+	} else {
+		uint32_t h1 = seed, carry = 0;
+		PMurHash32_Process(&h1, &carry, addr, INT_MAX);
+		PMurHash32_Process(&h1, &carry, addr + INT_MAX, len - INT_MAX);
+		MH_UINT32 hash = PMurHash32_Result(h1, carry, len);
+		memcpy(out, &hash, sizeof(hash));
+	}
 }
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -48,7 +58,8 @@ static uint32_t fmix32(uint32_t h)
 	return h;
 }
 
-void lmmh_x86_128(const void *addr, int len, uint32_t seed, void *out)
+void lmmh_x86_128(const void *addr, unsigned int len, uint32_t seed,
+				  uint32_t out[4])
 {
 	const uint8_t *data = (const uint8_t *)addr;
 	const int nblocks = len / 16;
@@ -214,8 +225,8 @@ static uint64_t fmix64(uint64_t k)
 	return k;
 }
 
-void lmmh_x64_128(const void *addr, const int len, const uint32_t seed,
-				  void *out)
+void lmmh_x64_128(const void *addr, unsigned int len, uint32_t seed,
+				  uint64_t out[2])
 {
 	const uint8_t *data = (const uint8_t *)addr;
 	const int nblocks = len / 16;
@@ -310,15 +321,21 @@ void lmmh_x64_128(const void *addr, const int len, const uint32_t seed,
 
 void MurmurHash3_x86_32(const void *addr, int len, uint32_t seed, void *out)
 {
-	lmmh_x86_32(addr, len, seed, out);
+	uint32_t buffer;
+	lmmh_x86_32(addr, len, seed, &buffer);
+	memcpy(out, &buffer, sizeof(buffer));
 }
 
 void MurmurHash3_x86_128(const void *addr, int len, uint32_t seed, void *out)
 {
-	lmmh_x86_128(addr, len, seed, out);
+	uint32_t buffer[4];
+	lmmh_x86_128(addr, len, seed, buffer);
+	memcpy(out, buffer, sizeof(buffer));
 }
 
 void MurmurHash3_x64_128(const void *addr, int len, uint32_t seed, void *out)
 {
-	lmmh_x64_128(addr, len, seed, out);
+	uint64_t buffer[2];
+	lmmh_x64_128(addr, len, seed, buffer);
+	memcpy(out, buffer, sizeof(buffer));
 }

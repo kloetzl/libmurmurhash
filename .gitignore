@@ -3,5 +3,6 @@
 *.so.*
 *.so
 mmh
-mmh_r
-mmh_d
+mmh_dyn
+mmh_old
+mmh_ref
