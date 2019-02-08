@@ -9,6 +9,16 @@ extern "C" {
 #endif
 #include <stdint.h>
 
+/** @brief Compute a non-cryptographic hash value.
+ *
+ * Consume the seed and a number of bytes starting from the pointer. Chews on
+ * the data and produces a hash value. Do not use for cryptography.
+ *
+ * @param addr - Pointer to data.
+ * @param len - Length of data.
+ * @param seed - Influence the resulting hash value.
+ * @param out - Output parameter.
+ */
 extern void lmmh_x86_32(const void *addr, unsigned int len, uint32_t seed,
 						uint32_t out[1]);
 extern void lmmh_x86_128(const void *addr, unsigned int len, uint32_t seed,

@@ -46,6 +46,9 @@ install-dev:
 	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/MurmurHash3_x86_32.3"
 	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/MurmurHash3_x86_128.3"
 	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/MurmurHash3_x64_128.3"
+	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/lmmh_x86_32.3"
+	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/lmmh_x86_128.3"
+	ln -f -r -s "$(MANDIR)/man3/murmurhash.3" "$(MANDIR)/man3/lmmh_x64_128.3"
 
 install-lib: $(SONAME)
 	$(INSTALL) -D -t "$(LIBDIR)" $(SONAME)
@@ -57,6 +60,7 @@ uninstall:
 	$(RM) "$(LIBDIR)/$(SONAME)"
 	$(RM) "$(MANDIR)/man3/murmurhash.3"
 	$(RM) "$(MANDIR)/man3/MurmurHash3_*"
+	$(RM) "$(MANDIR)/man3/lmmh_*"
 
 $(TARBALL):
 	mkdir -p "$(PROJECT_VERSION)"/test

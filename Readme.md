@@ -12,7 +12,17 @@ libmurmurhash has no prerequisites other than a reasonably up-to-date UNIX syste
 
 ## API
 
-LibMurmurHash provides the three variants of MurmurHash3 from the [original source](https://github.com/aappleby/smhasher). The first parameter specifies the beginning of the data to be hashed in memory. The second parameter gives the number of bytes to be hashed (must be positive). The third parameter can be used to compute an alternate hash on the same data. The output parameter specifies the location where the resulting hash shall be written to. It should be at least 4-byte or 8-byte aligned.
+LibMurmurHash provides the three variants of MurmurHash3 from the [original source](https://github.com/aappleby/smhasher). The first parameter specifies the beginning of the data to be hashed in memory. The second parameter gives the number of bytes to be hashed. The third parameter can be used to compute an alternative hash on the same data. Pass the location of the hash via the output parameter.
+
+```C
+#include <murmurhash.h>
+
+void lmmh_x86_32(const void *addr, unsigned int len, uint32_t seed, uint32_t out[1]);
+void lmmh_x86_128(const void *addr, unsigned int len, uint32_t seed, uint32_t out[4]);
+void lmmh_x64_128(const void *addr, unsigned int len, uint32_t seed, uint64_t out[2]);
+```
+
+For compatibility the original API is still supported but *deprecated*. It has two problems; The given length could be negative; The out parameter has some peculiar alignment requirements.
 
 ```C
 void MurmurHash3_x86_32(const void *data, int len, uint32_t seed, void *out);
