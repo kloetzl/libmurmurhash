@@ -68,6 +68,7 @@ $(TARBALL):
 	cp *.h *.c "$(PROJECT_VERSION)"
 	cp test/*.c test/*.h "$(PROJECT_VERSION)/test"
 	cp test/almostempty test/almostempty.hash "$(PROJECT_VERSION)/test"
+	cp murmurhash.3 "$(PROJECT_VERSION)"
 	tar -ca -f $@ "$(PROJECT_VERSION)"
 	$(RM) -r "$(PROJECT_VERSION)"
 
