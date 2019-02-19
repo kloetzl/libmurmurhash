@@ -6,3 +6,24 @@ mmh
 mmh_dyn
 mmh_old
 mmh_ref
+
+
+# autotools
+.deps/
+.libs/
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.h
+config.h.in
+config.log
+config.status
+config/
+configure
+libmurmurhash.la
+libmurmurhash.pc
+libmurmurhash_la-PMurHash.lo
+libmurmurhash_la-murmurhash.lo
+libtool
+stamp-h1
