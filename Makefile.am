@@ -1,3 +1,6 @@
+# AutoMake Me
+dist_noinst_DATA = NOLICENSE Readme.md
+
 lib_LTLIBRARIES  = libmurmurhash.la
 
 libmurmurhashdir=$(includedir)
@@ -30,7 +33,7 @@ mmh_old_LDADD = libmurmurhash.la
 # old interface, reference implementation
 mmh_ref_SOURCES = test/mmh_old.c test/MurmurHash3.c test/MurmurHash3.h
 
-dist_noinst_DATA = test/almostempty test/almostempty.hash
+dist_noinst_DATA += test/almostempty test/almostempty.hash
 
 check: mmh mmh_old
 	./mmh $(top_srcdir)/test/almostempty | diff $(top_srcdir)/test/almostempty.hash -
