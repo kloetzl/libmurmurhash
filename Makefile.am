@@ -13,30 +13,26 @@ pkgconfig_DATA = libmurmurhash.pc
 
 
 ## checks
-mmh.o: test/mmh.c
-	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
-
-mmh_old.o: test/mmh_old.c
-	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
-
-MurmurHash3.o: test/MurmurHash3.c test/MurmurHash3.h
-	$(CC) -I. $(CPPFLAGS) $(CFLAGS) -c -o $@ test/MurmurHash3.c
+check_PROGRAMS=mmh mmh_old
 
 # new interface, static linking
-mmh: mmh.o libmurmurhash.la
-	$(CC) $(CFLAGS) -o $@ mmh.o .libs/libmurmurhash.a # -L.libs -lmurmurhash
+mmh_SOURCES = test/mmh.c
+mmh_LDADD = libmurmurhash.la
 
 # new interface, dynamic linking
-mmh_dyn: test/mmh.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ -lmurmurhash
+mmh_dyn_SOURCES = test/mmh.c
+mmh_dyn_LDADD = -lmurmurhash
 
 # old interface, static linking
-mmh_old: mmh_old.o libmurmurhash.la
-	$(CC) $(CFLAGS) -o $@ mmh_old.o .libs/libmurmurhash.a # -L.libs -lmurmurhash
+mmh_old_SOURCES = test/mmh_old.c
+mmh_old_LDADD = libmurmurhash.la
 
 # old interface, reference implementation
-mmh_ref: mmh_old.o MurmurHash3.o
-	$(CC) $(CFLAGS) -o $@ $^
+mmh_ref_SOURCES = test/mmh_old.c test/MurmurHash3.c test/MurmurHash3.h
+
+# new interface, dynamic linking
+#mmh_dyn: test/mmh.c
+#	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ -lmurmurhash
 
 check: mmh mmh_old
 	./mmh test/almostempty | diff test/almostempty.hash -
@@ -51,7 +47,6 @@ check-dynamic: mmh_dyn
 	./mmh_dyn test/almostempty | diff test/almostempty.hash -
 
 ## misc
-
 format:
 	clang-format -i *.c *.h test/*.c test/*.h
 
