@@ -38,13 +38,17 @@ mmh_old: mmh_old.o libmurmurhash.la
 mmh_ref: mmh_old.o MurmurHash3.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-check: mmh mmh_old mmh_ref
-	diff test/almostempty.hash <(./mmh test/almostempty)
-	diff test/almostempty.hash <(./mmh_old test/almostempty)
+check: mmh mmh_old
+	./mmh test/almostempty | diff test/almostempty.hash -
+	./mmh_old test/almostempty | diff test/almostempty.hash -
+
+# Only execute this on x86 or x86_64
+check-ref: mmh_ref
+	./mmh_ref test/almostempty | diff test/almostempty.hash -
 
 # should be checked after installation!
 check-dynamic: mmh_dyn
-	diff test/almostempty.hash <(./mmh_dyn test/almostempty)
+	./mmh_dyn test/almostempty | diff test/almostempty.hash -
 
 ## misc
 
