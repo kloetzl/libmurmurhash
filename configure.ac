@@ -1,4 +1,5 @@
 AC_INIT(murmurhash, 1, kloetzl@evolbio.mpg.de)
+AC_CONFIG_SRCDIR([murmurhash.h])
 AC_CONFIG_HEADERS([config.h])
 
 AC_PREREQ(2.57)
@@ -17,6 +18,7 @@ AC_SUBST([LIB_VERSION])
 AC_SUBST([VERSION])
 
 # Checks for programs.
+AC_PROG_CC
 AC_PROG_LN_S
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
@@ -26,7 +28,19 @@ CPPFLAGS="-I\$(top_srcdir) $CPPFLAGS"
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h stddef.h stdint.h stdlib.h string.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_INLINE
+AC_TYPE_INT8_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
+
+# Checks for library functions.
+AC_FUNC_MMAP
+AC_CHECK_FUNCS([munmap])
 
 AC_PROG_MAKE_SET
 
