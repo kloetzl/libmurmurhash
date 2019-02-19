@@ -4,11 +4,13 @@ MurmurHash is one of the most commonly used non-cryptographic hash functions. Th
 
 ## Compiling and Installing
 
-libmurmurhash has no prerequisites other than a reasonably up-to-date UNIX system.
+libmurmurhash uses the autotools as the build system. When building from a release tarball they are optional as is the first step of the following.
 
+    autoreconf -fi  # optional
+    ./configure
     make
     make check
-    make DESTDIR=/usr/local install
+    make install
 
 ## API
 
