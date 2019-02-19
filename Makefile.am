@@ -30,21 +30,19 @@ mmh_old_LDADD = libmurmurhash.la
 # old interface, reference implementation
 mmh_ref_SOURCES = test/mmh_old.c test/MurmurHash3.c test/MurmurHash3.h
 
-# new interface, dynamic linking
-#mmh_dyn: test/mmh.c
-#	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^ -lmurmurhash
+dist_noinst_DATA = test/almostempty test/almostempty.hash
 
 check: mmh mmh_old
-	./mmh test/almostempty | diff test/almostempty.hash -
-	./mmh_old test/almostempty | diff test/almostempty.hash -
+	./mmh $(top_srcdir)/test/almostempty | diff $(top_srcdir)/test/almostempty.hash -
+	./mmh_old $(top_srcdir)/test/almostempty | diff $(top_srcdir)/test/almostempty.hash -
 
 # Only execute this on x86 or x86_64
 check-ref: mmh_ref
-	./mmh_ref test/almostempty | diff test/almostempty.hash -
+	./mmh_ref $(top_srcdir)/test/almostempty | diff $(top_srcdir)/test/almostempty.hash -
 
 # should be checked after installation!
 check-dynamic: mmh_dyn
-	./mmh_dyn test/almostempty | diff test/almostempty.hash -
+	./mmh_dyn $(top_srcdir)/test/almostempty | diff $(top_srcdir)/test/almostempty.hash -
 
 ## misc
 format:
