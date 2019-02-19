@@ -21,21 +21,6 @@ AC_PROG_LN_S
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-################################################################################
-# calling AC_PROG_CXX resets CXXFLAGS, we use our own flags set in the
-#	the AX_CXXFLAGS macro below.
-# So we cache the argument to configure
-#	here in ARG_CXX_FLAGS (so that our macro does not override them)
-################################################################################
-ARG_CXX_FLAGS="$CXXFLAGS"
-AC_PROG_CXX
-
-#Ranlib handled by check for libtool
-CXXFLAGS="$ARG_CXX_FLAGS"
-AX_CXXFLAGS
-
-AC_SUBST(CXXFLAGS)
-
 CPPFLAGS="-I\$(top_srcdir) $CPPFLAGS"
 # Checks for libraries.
 
