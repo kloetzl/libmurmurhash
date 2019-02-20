@@ -10,6 +10,7 @@ libmurmurhash_la_LDFLAGS = -version-info @LIB_VERSION@
 
 libmurmurhash_la_CPPFLAGS = $(INCLUDES)
 
+dist_man_MANS = murmurhash.3
 
 pkgconfigdir=$(libdir)/pkgconfig
 pkgconfig_DATA = libmurmurhash.pc
