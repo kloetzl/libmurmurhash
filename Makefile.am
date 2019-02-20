@@ -18,6 +18,7 @@ pkgconfig_DATA = libmurmurhash.pc
 
 ## checks
 check_PROGRAMS=mmh mmh_old
+EXTRA_PROGRAMS=mmh_dyn mmh_ref
 
 # new interface, static linking
 mmh_SOURCES = test/mmh.c
