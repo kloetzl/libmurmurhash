@@ -1,4 +1,4 @@
-AC_INIT(murmurhash, 1, kloetzl@evolbio.mpg.de)
+AC_INIT(libmurmurhash, 1.4, kloetzl@evolbio.mpg.de)
 AC_CONFIG_SRCDIR([murmurhash.h])
 AC_CONFIG_HEADERS([config.h])
 
