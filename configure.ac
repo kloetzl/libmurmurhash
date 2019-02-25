@@ -10,7 +10,7 @@ AC_CONFIG_MACRO_DIR(config)
 
 AM_INIT_AUTOMAKE([1.6 foreign dist-zip tar-ustar filename-length-max=299])
 
-LIB_VERSION=1:1
+LIB_VERSION=2:0:0
 
 AC_SUBST([VERSION])
 AC_SUBST([LIB_VERSION])
