@@ -40,7 +40,7 @@ void lmmh_x86_32(const void *addr, unsigned int len, MH_UINT32 seed,
 #define ROTL32(x, r) (((uint32_t)x << r) | ((uint32_t)x >> (32 - r)))
 #define ROTL64(x, r) (((uint64_t)x << r) | ((uint64_t)x >> (64 - r)))
 
-static uint32_t getblock32(const void *addr, int offset)
+static uint32_t getblock32(const unsigned char *addr, int offset)
 {
 	unsigned char data[sizeof(uint32_t)];
 	memcpy(&data, addr + offset * sizeof(uint32_t), sizeof(uint32_t));
