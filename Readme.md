@@ -38,4 +38,4 @@ No license—all code is public domain. I appreciate credit, though.
 
 ## Contact
 
-Please file a bug on GitHub <github.com/kloetzl/libmurmurhash> or send me a mail <kloetzl@evolbio.mpg.de>.
+Please file a bug on GitHub <github.com/kloetzl/libmurmurhash> or send me a mail <fabian-libmurmurhash@kloetzl.info>.
