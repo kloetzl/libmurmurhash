@@ -1,4 +1,4 @@
-AC_INIT(libmurmurhash, 1.5, fabian-libmurmurhash@kloetzl.info)
+AC_INIT(libmurmurhash, 1.6, fabian-libmurmurhash@kloetzl.info)
 AC_CONFIG_SRCDIR([murmurhash.h])
 AC_CONFIG_HEADERS([config.h])
 
