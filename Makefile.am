@@ -6,7 +6,7 @@ lib_LTLIBRARIES  = libmurmurhash.la
 libmurmurhashdir=$(includedir)
 libmurmurhash_HEADERS= murmurhash.h
 libmurmurhash_la_SOURCES = PMurHash.c murmurhash.c PMurHash.h
-libmurmurhash_la_LDFLAGS = -version-info @LIB_VERSION@
+libmurmurhash_la_LDFLAGS = -no-undefined -version-info @LIB_VERSION@
 
 libmurmurhash_la_CPPFLAGS = $(INCLUDES)
 
