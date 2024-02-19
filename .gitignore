@@ -22,6 +22,8 @@ config.log
 config.status
 config/
 configure
+configure~
+configure.ac~
 libmurmurhash.la
 libmurmurhash.pc
 libmurmurhash_la-PMurHash.lo

@@ -1,8 +1,8 @@
-AC_INIT(libmurmurhash, 1.6, fabian-libmurmurhash@kloetzl.info)
+AC_INIT([libmurmurhash],[1.6],[fabian-libmurmurhash@kloetzl.info])
 AC_CONFIG_SRCDIR([murmurhash.h])
 AC_CONFIG_HEADERS([config.h])
 
-AC_PREREQ(2.57)
+AC_PREREQ([2.71])
 
 #	Directory that contains install-sh and other auxiliary files
 AC_CONFIG_AUX_DIR([config])
@@ -21,13 +21,12 @@ AC_SUBST([VERSION])
 AC_PROG_CC
 AC_PROG_LN_S
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
+LT_INIT
 
 CPPFLAGS="-I\$(top_srcdir) $CPPFLAGS"
 # Checks for libraries.
 
 # Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h stddef.h stdint.h stdlib.h string.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
